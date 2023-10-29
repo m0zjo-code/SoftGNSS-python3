@@ -65,7 +65,7 @@ class AcquisitionResult(Result):
         phasePoints = np.arange(samplesPerCode) * 2 * np.pi * ts
 
         # Number of the frequency bins for the given acquisition band (500Hz steps)
-        numberOfFrqBins = np.int(np.round(settings.acqSearchBand * 2) + 1)
+        numberOfFrqBins = np.int32(np.round(settings.acqSearchBand * 2) + 1)
 
         # Generate all C/A codes and sample them according to the sampling freq.
         caCodesTable = settings.makeCaTable()
@@ -87,7 +87,7 @@ class AcquisitionResult(Result):
         # Correlation peak ratios of the detected signals
         peakMetric = np.zeros(32)
 
-        print '('
+        print('(', end = "")
         # Perform search for all listed PRN numbers ...
         for PRN in range(len(settings.acqSatelliteList)):
             # Correlate signals ======================================================
@@ -142,7 +142,7 @@ class AcquisitionResult(Result):
             peakSize = results.max(0).max()
             codePhase = results.max(0).argmax()
 
-            samplesPerCodeChip = long(round(settings.samplingFreq / settings.codeFreqBasis))
+            samplesPerCodeChip = int(round(settings.samplingFreq / settings.codeFreqBasis))
 
             excludeRangeIndex1 = codePhase - samplesPerCodeChip
 
@@ -166,7 +166,7 @@ class AcquisitionResult(Result):
             if (peakSize / secondPeakSize) > settings.acqThreshold:
                 # Fine resolution frequency search =======================================
                 # --- Indicate PRN number of the detected signal -------------------
-                print '%02d ' % (PRN + 1)
+                print('|%02d' % (PRN + 1), end ="", flush=True)
                 caCode = settings.generateCAcode(PRN)
 
                 codeValueIndex = np.floor(ts * np.arange(1, 10 * samplesPerCode + 1) / (1.0 / settings.codeFreqBasis))
@@ -179,9 +179,9 @@ class AcquisitionResult(Result):
                 fftNumPts = 8 * 2 ** (np.ceil(np.log2(len(xCarrier))))
 
                 # associated carrier frequency
-                fftxc = np.abs(np.fft.fft(xCarrier, np.long(fftNumPts)))
+                fftxc = np.abs(np.fft.fft(xCarrier, np.longlong(fftNumPts)))
 
-                uniqFftPts = np.long(np.ceil((fftNumPts + 1) / 2.0))
+                uniqFftPts = np.longlong(np.ceil((fftNumPts + 1) / 2.0))
 
                 fftMax = fftxc[4:uniqFftPts - 5].max()
                 fftMaxIndex = fftxc[4:uniqFftPts - 5].argmax()
@@ -194,10 +194,10 @@ class AcquisitionResult(Result):
 
             else:
                 # --- No signal with this PRN --------------------------------------
-                print '. '
+                print('|..', end = "", flush=True)
 
         # === Acquisition is over ==================================================
-        print ')\n'
+        print('|)\n')
         acqResults = np.core.records.fromarrays([carrFreq, codePhase_, peakMetric],
                                                 names='carrFreq,codePhase,peakMetric')
         self._results = acqResults
@@ -217,8 +217,8 @@ class AcquisitionResult(Result):
         mpl.rc('axes', grid=True, linewidth=1.5, axisbelow=True)
         mpl.rc('lines', linewidth=1.5, solid_joinstyle='bevel')
         mpl.rc('figure', figsize=[8, 6], autolayout=False, dpi=120)
-        mpl.rc('text', usetex=True)
-        mpl.rc('font', family='serif', serif='Computer Modern Roman', size=16)
+        mpl.rc('text', usetex=False)
+        #mpl.rc('font', family='serif', serif='Computer Modern Roman', size=16)
         mpl.rc('mathtext', fontset='cm')
 
         # mpl.rc('font', size=16)
@@ -240,7 +240,7 @@ class AcquisitionResult(Result):
         plt.bar(range(1, 33), self.peakMetric)
         plt.title('Acquisition results')
         plt.xlabel('PRN number (no bar - SV is not in the acquisition list)')
-        plt.ylabel('Acquisition Metric ($1^{st}$ to $2^{nd}$ Correlation Peaks Ratio')
+        plt.ylabel('Acquisition Metric (1st to 2nd Correlation Peaks Ratio')
         oldAxis = plt.axis()
 
         plt.axis([0, 33, 0, oldAxis[-1]])
@@ -251,7 +251,7 @@ class AcquisitionResult(Result):
 
         acquiredSignals = self.peakMetric * (self.carrFreq > 0)
 
-        plt.bar(range(1, 33), acquiredSignals, FaceColor=(0, 0.8, 0))
+        plt.bar(range(1, 33), acquiredSignals)
         plt.legend(['Not acquired signals', 'Acquired signals'])
         plt.show()
 
@@ -323,17 +323,17 @@ class AcquisitionResult(Result):
         print ('*=========*=====*===============*===========*=============*========*')
         for channelNr in range(settings.numberOfChannels):
             if channel[channelNr].status != '-':
-                print '|      %2d | %3d |  %2.5e |   %5.0f   |    %6d   |     %1s  |' % (
+                print('|      %2d | %3d |  %2.5e |   %5.0f   |    %6d   |     %1s  |' % (
                     channelNr,
                     channel[channelNr].PRN,
                     channel[channelNr].acquiredFreq,
                     channel[channelNr].acquiredFreq - settings.IF,
                     channel[channelNr].codePhase,
-                    channel[channelNr].status)
+                    channel[channelNr].status))
             else:
-                print '|      %2d | --- |  ------------ |   -----   |    ------   |   Off  |' % channelNr
+                print('|      %2d | --- |  ------------ |   -----   |    ------   |   Off  |' % channelNr)
 
-        print '*=========*=====*===============*===========*=============*========*\n'
+        print('*=========*=====*===============*===========*=============*========*\n')
 
 
 if __name__ == '__main__':

@@ -57,7 +57,7 @@ class TrackingResult(Result):
         rec = []
         # Start processing channels ==============================================
         for channelNr in range(settings.numberOfChannels):
-            msToProcess = np.long(settings.msToProcess)
+            msToProcess = np.longlong(settings.msToProcess)
             # Initialize fields for record(structured) array of tracked results
             status = '-'
 
@@ -104,7 +104,7 @@ class TrackingResult(Result):
                 # records). In addition skip through that data file to start at the
                 # appropriate sample (corresponding to code phase). Assumes sample
                 # type is schar (or 1 byte per sample)
-                fid.seek(settings.skipNumberOfBytes + channel[channelNr].codePhase, 0)
+                fid.seek(int(settings.skipNumberOfBytes + channel[channelNr].codePhase), 0)
                 # Here PRN is the actual satellite ID instead of the 0-based index
                 caCode = settings.generateCAcode(channel[channelNr].PRN - 1)
 
@@ -129,16 +129,16 @@ class TrackingResult(Result):
 
                 oldCarrError = 0.0
 
-                for loopCnt in range(np.long(codePeriods)):
+                for loopCnt in range(np.longlong(codePeriods)):
                     # GUI update -------------------------------------------------------------
                     # The GUI is updated every 50ms. This way Matlab GUI is still
                     # responsive enough. At the same time Matlab is not occupied
                     # all the time with GUI task.
                     if loopCnt % 50 == 0:
                         try:
-                            print 'Tracking: Ch %d' % (channelNr + 1) + ' of %d' % settings.numberOfChannels + \
+                            print('Tracking: Ch %d' % (channelNr + 1) + ' of %d' % settings.numberOfChannels + \
                                   '; PRN#%02d' % channel[channelNr].PRN + \
-                                  '; Completed %d' % loopCnt + ' of %d' % codePeriods + ' msec'
+                                  '; Completed %d' % loopCnt + ' of %d' % codePeriods + ' msec')
                         finally:
                             pass
                     # Read next block of data ------------------------------------------------
@@ -148,7 +148,7 @@ class TrackingResult(Result):
                     codePhaseStep = codeFreq / settings.samplingFreq
 
                     blksize = np.ceil((settings.codeLength - remCodePhase) / codePhaseStep)
-                    blksize = np.long(blksize)
+                    blksize = np.longlong(blksize)
 
                     # interaction
                     rawSignal = np.fromfile(fid, settings.dataType, blksize)
@@ -157,7 +157,7 @@ class TrackingResult(Result):
                     # If did not read in enough samples, then could be out of
                     # data - better exit
                     if samplesRead != blksize:
-                        print 'Not able to read the specified number of samples for tracking, exiting!'
+                        print('Not able to read the specified number of samples for tracking, exiting!')
                         fid.close()
                         trackResults = None
                         return trackResults

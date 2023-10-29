@@ -40,7 +40,7 @@ import initialize
 # addpath('include')
 # addpath('geoFunctions')
 # Print startup ==========================================================
-print '\n', \
+print( '\n', \
     'Welcome to:  softGNSS\n\n', \
     'An open source GNSS SDR software project initiated by:\n\n', \
     '              Danish GPS Center/Aalborg University\n\n', \
@@ -49,24 +49,23 @@ print '\n', \
     'for details please read license details in the file license.txt. This\n', \
     'is free software, and  you  are  welcome  to  redistribute  it under\n', \
     'the terms described in the license.\n\n', \
-    '                   -------------------------------\n\n'
+    '                   -------------------------------\n\n')
 # Initialize settings class=========================================
 settings = initialize.Settings()
 
 # Generate plot of raw data and ask if ready to start processing =========
 try:
-    print 'Probing data "%s"...' % settings.fileName
-    settings.probeData()
-    settings.probeData('/Users/yangsu/Downloads/GNSS_signal_records/GPS_and_GIOVE_A-NN-fs16_3676-if4_1304.bin')
+    print('Probing data "%s"...' % settings.fileName)
+    #settings.probeData('E:\GNSSWork\GPSdata-DiscreteComponents-fs38_192-if9_55.bin')
 finally:
     pass
 
-print '  Raw IF data plotted '
-print '  (run setSettings or change settings in "initialize.py" to reconfigure)'
-print ' '
+print('  Raw IF data plotted ')
+print('  (run setSettings or change settings in "initialize.py" to reconfigure)')
+print(' ')
 gnssStart = True
 # gnssStart = int(raw_input('Enter "1" to initiate GNSS processing or "0" to exit : ').strip())
 
 if gnssStart:
-    print ' '
+    print(' ')
     settings.postProcessing()
