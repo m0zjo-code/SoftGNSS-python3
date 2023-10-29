@@ -1,17 +1,14 @@
 # Getting Started
 
 This is a GNSS Software Defined Radio (SDR) implemented in python, based on SoftGNSS 3.0 developed by Darius Plausinaitis and Dennis M. Akos in Matlab.
+Updated from Python2 to Python3 by Jonathan/M0ZJO
 
 # System requirements
 
-* python 2.7
+* python 3.xx
 * matplotlib
 * scipy
 * numpy
-
-# Installation
-
-Coming soon!
 
 # Running the GNSS SDR
 
